@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { WebSocketServer } = require('ws');
 
+const PORT = process.env.PORT || 4000;
+
 const app = express();
-const PORT = 4000;
-const WS_PORT = 4001;
 
 app.use(cors());
 app.use(express.json());
@@ -138,12 +138,11 @@ app.post('/generate/stop', (req, res) => {
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`REST API listening on http://localhost:${PORT}`);
+  console.log(`REST API and WebSocket listening on http://localhost:${PORT}`);
 });
 
-// WebSocket server
-const wsServer = new WebSocketServer({ port: WS_PORT });
+// WebSocket server (on same port as REST for Railway)
+const wsServer = new WebSocketServer({ server });
 wsServer.on('connection', ws => {
   ws.send(JSON.stringify({ type: 'update', candidates }));
-});
-console.log(`WebSocket server running on ws://localhost:${WS_PORT}`); 
+}); 
